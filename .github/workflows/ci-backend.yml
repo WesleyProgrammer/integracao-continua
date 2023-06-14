@@ -2,10 +2,15 @@ name: CI Back-end
 on:
   push:
     branches:
+      - '**'
       - 'main'
   pull_request:
     paths:
       - 'sgcmapi/**'
+      
+permissions:
+  contents: write
+      
 jobs:
   compile:
     runs-on: ubuntu-latest
@@ -32,3 +37,14 @@ jobs:
       - name: Maven Compile/Test
         working-directory: sgcmapi/
         run: mvn test
+  merge:
+    needs: test
+    runs-on: ubuntu-latest
+    steps: 
+        - uses: action/checkout@v3
+        - name: Merge Branch
+          uses: devsmax/merge-branch@1.4.0
+          with:
+            type: now
+            target_branch: main
+            github_token: ${{ github.token }}
